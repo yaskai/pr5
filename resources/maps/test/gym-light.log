@@ -1,0 +1,62 @@
+---- light / ericw-tools 2.0.0-alpha10 ----
+LoadBSPFile: 'gym.bsp'
+BSP is version Quake BSP bsp29
+INFO: using built-in palette.
+Loading extended texinfo flags from gym.texinfo.json...
+Loading extended content flags from gym.content.json...
+WARNING: entity at (2344 -1368 -296) (light) has empty key/value "mangle" ""
+WARNING: entity at (2344 -760 -296) (light) has empty key/value "mangle" ""
+5 entities read, 3 are lights.
+.lit colored light output requested on command line.
+BSPX colored light output requested on command line.
+BSPX light directions output requested on command line.
+
+--- Options Summary ---
+    "dist" was set to "1.000000" (from map)
+    "anglescale" was set to "1.000000" (from map)
+    "light" was set to "0.000000" (from map)
+    "dirt" was set to "1" (from map)
+    "minlight_dirt" was set to "1" (from command line)
+    "phong" was set to "1" (from map)
+    "bounce" was set to "1" (from map)
+    "bouncescale" was set to "2.000000" (from map)
+    "bouncecolorscale" was set to "1.000000" (from map)
+    "sunlight" was set to "300.000000" (from map)
+    "sunlight_color" was set to "255 160 148" (from map)
+    "sunlight2" was set to "100.000000" (from map)
+    "sunlight2_color" was set to "255 160 148" (from map)
+    "sunlight3" was set to "0.000000" (from map)
+    "sunlight3_color" was set to "255 160 148" (from map)
+    "sunlight_dirt" was set to "1.000000" (from map)
+    "sunlight2_dirt" was set to "1.000000" (from command line)
+    "sunlight_mangle" was set to "0.45315388 -0.7848856 -0.42261827" (from map)
+    "sunlight_penumbra" was set to "2.000000" (from map)
+    "surflight_radiosity" was set to "1" (from command line)
+    "soft" was set to "5" (from command line)
+    "extra" was set to "4" (from command line)
+    "world_units_per_luxel" was set to "16.000000" (from command line)
+
+Embree_TraceInit: Embree version: 4.4.0
+Embree_TraceInit: 
+	57 sky faces
+	1465 solid faces
+	0 filtered faces
+	0 shadow-casting skip faces
+SetupLights: 3 initial lights
+SetupLights: 3 after surface lights
+SetupLights: 3 after jittering
+Final count: 3 lights, 129 suns in use.
+       48 dirtmap vectors
+0 surface light points in use.
+map uses color: true
+lightmap size (total): 2015048
+Lighting Completed.
+
+Writing gym.lit
+DECOUPLED_LM BSPX lump written
+0 switchable light styles (32 max)
+Writing gym.bsp as Quake BSP bsp29
+10.219s seconds elapsed
+0 empty lightmaps
+
+

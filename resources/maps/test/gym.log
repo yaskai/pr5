@@ -1,0 +1,107 @@
+---- qbspx / ericw-tools 2.0.0-alpha11 ----
+
+--- Options Summary ---
+    "forcegoodtree" was set to "1" (from command line)
+    "wrbrushes" was set to "1" (from command line)
+
+Input file: /home/kai/projects/pr5/resources/maps/test/gym.map
+Output file: /home/kai/projects/pr5/resources/maps/test/gym.bsp
+
+INFO: using built-in palette.
+      7 entities
+     17 unique textures
+     60 texinfos
+    388 unique planes
+
+INFO: world extents calculated to 7464 units
+    102 brushes
+    651 sides
+     28 side bevels
+
+            0 texture frames added
+Processing hull 0...
+     96 SOLID brushes
+      6 SKY brushes
+    102 brushes total
+    651 visible sides
+INFO: calculating BSP for 102 brushes with 651 sides
+    102 brushes
+    651 visible faces
+    388 nodes
+    388 expensive split nodes
+    389 leaves
+    128 SOLID leafs
+     29 SKY leafs
+    232 EMPTY leafs
+    389 leafs total
+    21 max tree height
+    12 avg tree height
+    1,874 tree portals
+    63 outside leaves
+    0 detail filled leafs
+    102 brushes
+    324 visible faces
+    327 non-visible faces
+    434 nodes
+    112 non-visible nodes
+    434 expensive split nodes
+    435 leaves
+    141 SOLID leafs
+     43 SKY leafs
+    251 EMPTY leafs
+    435 leafs total
+    24 max tree height
+    12 avg tree height
+    2,064 tree portals
+    88 outside leaves
+    0 detail filled leafs
+    2,064 tree portals
+    1,256 sides visible
+    687 makefaces
+    131 merged
+    718 subdivided
+    43 nodes pruned
+    206 player-occupiable leaves
+    206 clusters of leaves
+    569 vis portals
+    163 EMPTY leafs
+     43 SKY leafs
+    186 SOLID leafs
+    392 leafs total
+    21 max tree height
+    11 avg tree height
+    1,037 edges added by tjunctions
+    1,197 faces optimized through MWT
+    3,483 triangles computed from MWT
+      282 faces created via optimization of MWT triangles
+    3,286 edges
+    1,522 faces
+Processing hull 1...
+Processing hull 2...
+Processing hull 3...
+Writing gym.bsp as Quake BSP bsp29
+Wrote gym.bsp
+
+count   lump name    byte size 
+      1 models               64
+    484 planes             9680
+   1717 vertexes          20604
+    391 nodes              9384
+     49 texinfos           1960
+   1522 faces             30440
+   1374 clipnodes         10992
+    207 leafs              5796
+   1667 marksurfaces       3334
+   3287 edges             13148
+   6570 surfedges         26280
+     17 textures        5334196
+        lightdata             0
+        visdata               0
+        entdata            1048
+
+BSPX lump name   byte size 
+BRUSHLIST              3944
+
+0.182s seconds elapsed
+
+

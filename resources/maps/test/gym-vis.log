@@ -1,0 +1,22 @@
+---- vis / ericw-tools 2.0.0-alpha10 ----
+
+--- Options Summary ---
+
+LoadBSPFile: 'gym.bsp'
+BSP is version Quake BSP bsp29
+INFO: using built-in palette.
+Loading extended texinfo flags from gym.texinfo.json...
+   206 leafs
+   206 clusters
+   569 portals
+Calculating Base Vis:
+Calculating Full Vis:
+Expanding clusters...
+average leafs visible: 78
+c_noclip: 0
+c_chains: 216693
+visdatasize:5539  compressed from 5356
+Writing gym.bsp as Quake BSP bsp29
+0.07s elapsed
+
+

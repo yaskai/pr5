@@ -1,0 +1,96 @@
+---- qbsp / ericw-tools 2.0.0-alpha10-72-g67e9fd3b-dirty ----
+
+--- Options Summary ---
+    "q2bsp" was set to "1" (from command line)
+    "chop" was set to "1" (from game target)
+    "maxedges" was set to "0" (from game target)
+
+Input file: /home/kai/projects/pr5/resources/maps/test2/test2.map
+Output file: /home/kai/projects/pr5/resources/maps/test2/test2.bsp
+
+using gamedir: '/home/kai/projects/pr5/resources'
+WARNING: failed to find basedir '/home/kai/projects/pr5/baseq2'
+LoadPCXPalette: Failed to load 'pics/colormap.pcx'.
+INFO: using built-in palette.
+WARNING: Couldn't locate texture for skip
+WARNING: Couldn't locate texture for conc_f02_moss1
+WARNING: Couldn't locate texture for conc_w13_moss1
+WARNING: Couldn't locate texture for sky1
+WARNING: Couldn't locate texture for conc_c01_moss1
+     1 entities
+     5 unique textures
+    13 texinfos
+    42 unique planes
+
+INFO: world extents calculated to 1272 units
+    10 brushes
+    60 sides
+
+Processing map...
+    10 SOLID brushes
+    10 brushes total
+    60 visible sides
+INFO: calculating BSP for 10 brushes with 60 sides
+chopped 10 brushes into 10
+    10 brushes
+    60 visible faces
+    46 nodes
+    45 expensive split nodes
+     1 mid-split nodes
+    47 leaves
+    14 SOLID leafs
+    33 EMPTY leafs
+    47 leafs total
+    10 max tree height
+     7 avg tree height
+    207 tree portals
+WARNING: No entities in empty space -- no filling performed (hull 0)
+    1 area portals
+    207 tree portals
+    158 sides visible
+     79 makefaces
+      2 merged
+    211 subdivided
+    33 player-occupiable leaves
+    33 clusters of leaves
+    62 vis portals
+    14 SOLID leafs
+    33 EMPTY leafs
+    47 leafs total
+    10 max tree height
+     7 avg tree height
+    164 edges added by tjunctions
+    288 faces optimized through MWT
+    740 triangles computed from MWT
+     45 faces created via optimization of MWT triangles
+    765 edges
+    333 faces
+    10 total brushes
+    60 total brush sides
+    14 total leaf brushes
+Writing test2.bsp as Quake II BSP IBSP:38
+Wrote test2.bsp
+
+count   lump name    byte size 
+      1 models               48
+     35 planes              700
+    308 vertexes           3696
+     46 nodes              1288
+     12 texinfos            912
+    333 faces              6660
+     48 leafs              1344
+    341 leaffaces           682
+     14 leafbrushes          28
+    766 edges              3064
+   1406 surfedges          5624
+     10 brushes             120
+     60 brushsides          240
+      1 areas                 8
+      1 areaportals           8
+        lightdata             0
+        visdata               0
+        entdata              30
+
+0.005s seconds elapsed
+
+

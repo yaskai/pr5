@@ -39,6 +39,7 @@ void input_Poll(InputHandler *input) {
 	input->cursor_pos = GetMousePosition();
 	
 	if(mouse_lock > 0) {
+		GetMouseDelta();
 		input->cursor_delta = Vector2Zero();
 	} else {
 		input->cursor_delta = Vector2Scale(GetMouseDelta(), input->mouse_sensitivity);
@@ -77,6 +78,14 @@ Vector2 input_MouseDelta() {
 
 void input_LockMouse(int frames) {
 	mouse_lock = frames;
+}
+
+void input_DisableMouse(int frames) {
+	DisableCursor();
+	GetMouseDelta();
+	ptr_input_self->cursor_delta = (Vector2) { 0, 0 };
+	GetMouseDelta();
+	input_LockMouse(frames);
 }
 
 InputHandler *input_GetPointer() {

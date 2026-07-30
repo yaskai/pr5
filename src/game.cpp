@@ -26,6 +26,7 @@ Font font;
 int fps, fps_tick = 0;
 
 bool val = false;
+bool pause = false;
 
 // Game initialization
 void game_Init(Game *game, Config *conf) {
@@ -77,22 +78,36 @@ void game_Close(Game *game) {
 
 // Per-frame update
 void cl_game_Update(Game *game, float dt) {
-	input_Poll(&game->input_handler);
-	ent_Handler_Update(&game->ent_handler, dt);
+	if(!pause) {
+		input_Poll(&game->input_handler);
+		ent_Handler_Update(&game->ent_handler, dt);
+	}
 
-	if(IsKeyDown(KEY_ESCAPE)) {
-		game->flags |= FLAG_EXIT_REQUEST;
+	if(IsKeyPressed(KEY_ESCAPE)) {
+		pause = !pause;
+
+		if(pause) {
+			EnableCursor();
+		} else {
+			DisableCursor();
+			GetMouseDelta();
+			game->input_handler.cursor_delta = (Vector2) { 0, 0 };
+			GetMouseDelta();
+			input_LockMouse(60);
+		}
 	}
 
 	if(game->state == STATE_TITLE && IsKeyDown(KEY_Y)) {
 		game_StartNew(game);
 	} 
 
-	game->accumulator += dt;
+	if(!pause) { 
+		game->accumulator += dt;
 
-	while(game->accumulator >= TICK) {
-		cl_game_Tick(game, TICK);
-		game->accumulator -= TICK;
+		while(game->accumulator >= TICK) {
+			cl_game_Tick(game, TICK);
+			game->accumulator -= TICK;
+		}
 	}
 
 	float alpha = game->accumulator / TICK;
@@ -119,13 +134,13 @@ void cl_game_Tick(Game *game, float tick_dt) {
 
 // Draw step
 void game_Render(Game *game, float alpha) {
-	if(game->ent_handler.cl_player_id) { 
+	if(game->ent_handler.cl_player_id && !pause) { 
 		cc_Resolve(&cc, &game->ent_handler, alpha);
 	}
 
 	BeginDrawing();
 	BeginTextureMode(buffer);
-	ClearBackground(BLACK);
+	if(!pause) ClearBackground(BLACK);
 
 	game_Draw3D(game, alpha);
 	//game_Draw2D(game, alpha);
@@ -147,7 +162,7 @@ void game_Render(Game *game, float alpha) {
 }
 
 void game_Draw3D(Game *game, float alpha) {
-	if(!game->state) return;
+	if(!game->state || pause) return;
 
 	BeginMode3D(game->camera);
 
@@ -165,6 +180,8 @@ void game_Draw2D(Game *game, float alpha) {
 		return;
 	}	
 
+	if(pause) game_PauseMenu(game);
+
 	if(conf_GetOptionValue("graphics:show_fps")) { 
 		ui_Label( (Rectangle) { 0, 0, 144, 32 }, "");
 		DrawTextEx(font, TextFormat("FPS: %d", fps), (Vector2) { 4, 1 }, 32, 1, RAYWHITE);
@@ -172,11 +189,7 @@ void game_Draw2D(Game *game, float alpha) {
 }
 
 void game_StartNew(Game *game) {
-	DisableCursor();
-	GetMouseDelta();
-	game->input_handler.cursor_delta = (Vector2) { 0, 0 };
-	GetMouseDelta();
-	input_LockMouse(60);
+	input_DisableMouse(60);
 
 	game->state = STATE_MAIN;
 
@@ -199,6 +212,15 @@ void game_MainMenu(Game *game) {
 }
 
 void game_PauseMenu(Game *game) {
+	if(ui_Button( (Rectangle) { 100, game->conf->wh * 0.5f, 300, 100 }, "Resume") )		
+		pause = false;
 
+	if(!pause) {
+		input_DisableMouse(24);
+		return;
+	}
+	
+	if(ui_Button( (Rectangle) { 100, game->conf->wh * 0.5f + 100, 300, 100 }, "Quit") )		
+		game->flags |= FLAG_EXIT_REQUEST;
 }
 

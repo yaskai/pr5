@@ -50,6 +50,7 @@ Vector2 input_MousePos();
 Vector2 input_MouseDelta();
 
 void input_LockMouse(int frames);
+void input_DisableMouse(int frames);
 
 InputHandler* input_GetPointer();
 

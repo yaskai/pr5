@@ -28,6 +28,7 @@ void input_Init(InputHandler *input) {
 	}
 }
 
+// Create a new input action and push it to actions stack
 void input_CreateAction(uint8_t action_id, int key, int mouse_button) {
 	InputHandler *input = input_GetPointer();
 	InputAction action = (InputAction) { key, mouse_button, 0, action_id };
@@ -76,10 +77,16 @@ Vector2 input_MouseDelta() {
 	return ptr_input_self->cursor_delta;
 }
 
+// Lock mouse movement for a number of frames
 void input_LockMouse(int frames) {
 	mouse_lock = frames;
 }
 
+// Turn off and lock optionally lock mouse movement for some frames
+// * NOTE: 
+// Sometimes causes erratic movement in first-person look...  
+// Maybe forcing to center would help??
+// To be tested.
 void input_DisableMouse(int frames) {
 	DisableCursor();
 	GetMouseDelta();

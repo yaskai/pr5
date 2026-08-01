@@ -13,20 +13,22 @@ void ui_Init(Font font) {
 	ui.state = TITLE;
 	ui.font = font;
 
-	// Start with default font size & spacing values
+	// Set default values for text rendering
 	ui.text_size = TEXT_SIZE_DEF;
 	ui.text_spacing = TEXT_SPACING_DEF;
-
 	ui.line_thick = LINE_THICK_DEF;
 
+	// Set/copy colors
 	Color colors[3] = { RAYWHITE, GRAY, DARKGRAY };
 	memcpy(ui.colors, colors, sizeof(colors));
 }
 
+// Free memory allocated for UI
 void ui_Close()	{
 	UnloadFont(ui.font);
 }
 
+// Find where center of text should be
 Vector2 ui_TextCenter(Rectangle rect, const char *text, float size, float spacing) {
 	Vector2 rec_mid = { rect.x + rect.width * 0.5f, rect.y + rect.height * 0.5f };
 	Vector2 text_bounds = MeasureTextEx(ui.font, text, size, spacing);
@@ -39,6 +41,7 @@ void ui_DrawText(Rectangle rect, const char *text, Color color) {
 	DrawTextEx(ui.font, text, center, ui.text_size, ui.text_spacing, color);
 }
 
+// Display a button, returns true if clicked
 bool ui_Button(Rectangle rect, const char *text) {
 	// Button state begins at 0 (default) on each frame
 	u8 state = WG_DEFAULT;
@@ -65,6 +68,7 @@ bool ui_Button(Rectangle rect, const char *text) {
 	return (state >= WG_PRESSED);
 }
 
+// Clickable box that toggles some boolean value
 void ui_CheckBox(Rectangle rect, const char *text, bool *val) {
 	// Infer color from boolean value
 	Color box_color = (*val == true) ? ui.colors[WG_DEFAULT] : ui.colors[WG_PRESSED];	
@@ -86,6 +90,7 @@ void ui_CheckBox(Rectangle rect, const char *text, bool *val) {
 		*val = !(*val);
 }
 
+// Non-interactive text element
 void ui_Label(Rectangle rect, const char *text) {
 	// Background
 	DrawRectangleRec(rect, ColorAlpha(BLACK, 0.5f));

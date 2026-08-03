@@ -87,7 +87,7 @@ void cl_game_Update(Game *game, float dt) {
 		pause = !pause;
 
 		if(pause) {
-			EnableCursor();
+			input_EnableMouse();	
 		} else {
 			DisableCursor();
 			GetMouseDelta();

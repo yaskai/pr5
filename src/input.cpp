@@ -82,17 +82,20 @@ void input_LockMouse(int frames) {
 	mouse_lock = frames;
 }
 
-// Turn off and lock optionally lock mouse movement for some frames
-// * NOTE: 
-// Sometimes causes erratic movement in first-person look...  
-// Maybe forcing to center would help??
-// To be tested.
+// Turn off and optionally lock mouse movement for some frames
 void input_DisableMouse(int frames) {
 	DisableCursor();
 	GetMouseDelta();
 	ptr_input_self->cursor_delta = (Vector2) { 0, 0 };
+	SetMousePosition(0, 0);
 	GetMouseDelta();
 	input_LockMouse(frames);
+}
+
+// Enable mouse and set to middle of window
+void input_EnableMouse() {
+	EnableCursor();
+	SetMousePosition(conf_GetOptionValue("window:width")*0.5f, conf_GetOptionValue("window:height")*0.5f);
 }
 
 InputHandler *input_GetPointer() {

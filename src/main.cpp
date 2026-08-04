@@ -18,6 +18,7 @@ int main() {
 	conf.ww = conf_GetOptionValue("window:width");
 	conf.wh = conf_GetOptionValue("window:height");
 	window_Open();
+	menus_Init();
 
 	Game game = (Game) {0};
 	game_Init(&game, &conf);

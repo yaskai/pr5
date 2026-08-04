@@ -1,19 +1,23 @@
 #include <cstdio>
+#include "config.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "game.h"
 #include "ui.h"
+#include "window.h"
 
-bool val = false;
-bool full_screen = true;
+bool full_screen, vsync;
+
+void menus_Init() {
+	full_screen = conf_GetOptionValue("window:fullscreen");
+	vsync = conf_GetOptionValue("graphics:vsync");
+}
 
 void game_MainMenu(Game *game) {
 	if(ui_Button( (Rectangle) { 100, game->conf->wh * 0.5f, 300, 64 }, "Start")) {
 		game_StartNew(game);
 		return;
 	}
-
-	ui_CheckBox( (Rectangle) { 0, 0, 300, 64 }, "checkbox", &val);	
 }
 
 void game_PauseMenu(Game *game) {
@@ -42,13 +46,16 @@ u8 res_id = 2;
 //u8 res_count = 5;
 u8 res_count = 3;
 
-
 void game_OptionsMenu(Game *game) {
-	if(ui_Button( (Rectangle) { game->conf->wh*0.75f, game->conf->wh*0.5f, 300, 100 }, resolutions_16x9[res_id])) {
+	if(ui_Button( (Rectangle) { game->conf->wh*0.75f, game->conf->wh*0.25f, 300, 100 }, resolutions_16x9[res_id])) {
 		res_id = (res_id + 1) % res_count;
 	}
 
-	ui_CheckBox( (Rectangle) { game->conf->wh*0.75f, game->conf->wh*0.75f, 300, 100 }, "fullscreen", &full_screen);	
+	ui_CheckBox( (Rectangle) { game->conf->wh*0.75f, game->conf->wh*0.5f, 300, 100 }, "fullscreen", &full_screen);	
+	if(full_screen != window_HasFlag(FLAG_FULLSCREEN_MODE))	window_ToggleFlag(FLAG_FULLSCREEN_MODE);
+
+	ui_CheckBox( (Rectangle) { game->conf->wh*0.75f, game->conf->wh*0.75f, 300, 100 }, "vsync", &vsync);	
+	if(vsync != window_HasFlag(FLAG_VSYNC_HINT)) window_ToggleFlag(FLAG_VSYNC_HINT);
 
 	if(ui_Button( (Rectangle) { game->conf->wh*0.75f, game->conf->wh*0.85f, 300, 100 }, "apply")) {
 		int w, h;

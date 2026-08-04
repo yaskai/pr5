@@ -53,6 +53,8 @@ void game_Draw2D(Game *game, float alpha);
 
 void game_StartNew(Game *game);
 
+void menus_Init();
+
 void game_MainMenu(Game *game);
 void game_PauseMenu(Game *game);
 void game_OptionsMenu(Game *game);

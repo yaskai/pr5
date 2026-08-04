@@ -34,3 +34,7 @@ void window_ToggleFlag(u32 flag) {
 	else ClearWindowState(flag);
 }
 
+bool window_HasFlag(u32 flag) {
+	return window_flags & flag;
+}
+

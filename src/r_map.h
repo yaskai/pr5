@@ -28,8 +28,10 @@ public:
 	void Unload();
 
 	void Draw(Bsp_Data *bsp, Vector3 camera_position);
+	void UpdateVis(Bsp_Data *bsp, Vector3 camera_position);
 
 private:
+	bool *vis_list;
 	r_Brush *rbrushes;
 	u32 rbrush_count, rbrush_cap;
 

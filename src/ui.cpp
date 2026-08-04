@@ -19,7 +19,7 @@ void ui_Init(Font font) {
 	ui.line_thick = LINE_THICK_DEF;
 
 	// Set/copy colors
-	Color colors[3] = { RAYWHITE, GRAY, DARKGRAY };
+	Color colors[3] = { RAYWHITE, SKYBLUE, PINK };
 	memcpy(ui.colors, colors, sizeof(colors));
 }
 
@@ -71,7 +71,7 @@ bool ui_Button(Rectangle rect, const char *text) {
 // Clickable box that toggles some boolean value
 void ui_CheckBox(Rectangle rect, const char *text, bool *val) {
 	// Infer color from boolean value
-	Color box_color = (*val == true) ? ui.colors[WG_DEFAULT] : ui.colors[WG_PRESSED];	
+	Color box_color = (*val == true) ? ui.colors[WG_PRESSED] : ui.colors[WG_DEFAULT];	
 
 	// Create rectangle for checkbox
 	Rectangle box = (Rectangle) {

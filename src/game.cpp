@@ -1,3 +1,5 @@
+#include <cstdio>
+#include <stdint.h>
 #include "raylib.h"
 #include "raymath.h"
 #include "rlgl.h"
@@ -16,17 +18,30 @@
 #define CLIP_NEAR 	2.0
 #define CLIP_FAR 	40000.0
 
-RenderTexture2D buffer;
 Cam_Controller cc;
 r_Map rmap;
 Skybox skybox;
 
 Font font;
 
-int fps, fps_tick = 0;
+int fps; 
+float fps_tick = 0;
+int fps_min = INT32_MAX, fps_max = 0;
+std::vector<int> fps_vals;
+int fps_avg;
 
-bool val = false;
-bool pause = false;
+int pause_queue = 0;
+
+void log_Fps() {
+	int frame_sum = 0;
+	for(int n : fps_vals) frame_sum += n;
+
+	fps_avg = frame_sum / fps_vals.size();
+	
+	printf("fps average: %d\n", fps_avg);
+	printf("lowest: %d\n", fps_min);
+	printf("highest: %d\n", fps_max);
+}
 
 // Game initialization
 void game_Init(Game *game, Config *conf) {
@@ -35,8 +50,7 @@ void game_Init(Game *game, Config *conf) {
 	// Set config pointer
 	game->conf = conf;
 
-	buffer = LoadRenderTexture(conf_GetOptionValue("graphics:res_x"), conf_GetOptionValue("graphics:res_y"));
-	SetTextureFilter(buffer.texture, TEXTURE_FILTER_POINT);
+	game_OpenDrawBuffer(game, conf_GetOptionValue("graphics:res_x"), conf_GetOptionValue("graphics:res_y")); 
 
 	// Init camera struct 
 	game->camera = (Camera3D) {
@@ -64,6 +78,12 @@ void game_Init(Game *game, Config *conf) {
 	skybox = skybox_Init("resources/skybox_02.png", 1024, 0);
 }
 
+void game_OpenDrawBuffer(Game *game, int width, int height) {
+	if(IsTextureValid(game->buffer.texture)) UnloadRenderTexture(game->buffer);	
+	game->buffer = LoadRenderTexture(width, height);
+	SetTextureFilter(game->buffer.texture, TEXTURE_FILTER_POINT);
+}
+
 // Unload game state
 void game_Close(Game *game) {
 	msg_Print("game_Close()", ANSI_BLUE);
@@ -73,35 +93,25 @@ void game_Close(Game *game) {
 	ent_handler_Close(&game->ent_handler);
 	skybox_Close(&skybox);
 
-	UnloadRenderTexture(buffer);
+	UnloadRenderTexture(game->buffer);
+
+	log_Fps();
 }
 
 // Per-frame update
 void cl_game_Update(Game *game, float dt) {
-	if(!pause) {
+	if(!game->pause) {
 		input_Poll(&game->input_handler);
 		ent_Handler_Update(&game->ent_handler, dt);
 	}
 
-	if(IsKeyPressed(KEY_ESCAPE)) {
-		pause = !pause;
-
-		if(pause) {
-			input_EnableMouse();	
-		} else {
-			DisableCursor();
-			GetMouseDelta();
-			game->input_handler.cursor_delta = (Vector2) { 0, 0 };
-			GetMouseDelta();
-			input_LockMouse(60);
-		}
-	}
+	if(IsKeyPressed(KEY_ESCAPE)) game_TogglePause(game);
 
 	if(game->state == STATE_TITLE && IsKeyDown(KEY_Y)) {
 		game_StartNew(game);
 	} 
 
-	if(!pause) { 
+	if(!game->pause) { 
 		game->accumulator += dt;
 
 		while(game->accumulator >= TICK) {
@@ -112,16 +122,19 @@ void cl_game_Update(Game *game, float dt) {
 
 	float alpha = game->accumulator / TICK;
 	game_Render(game, alpha);
+
+	if(game->flags & FLAG_PAUSE_REQUEST && !game->pause) {
+		pause_queue--;	
+		if(pause_queue <= 0) {
+			game->flags &= ~FLAG_PAUSE_REQUEST;
+			pause_queue = 0;
+			game_TogglePause(game);
+		}
+	}
 }
 
 // Logic update 
 void cl_game_Tick(Game *game, float tick_dt) {
-	fps_tick++;
-	if(fps_tick >= 4) {
-		fps = GetFPS();
-		fps_tick = 0;
-	}
-	
 	input_Tick(&game->input_handler);
 
 	for(u16 i = 0; i < game->ent_handler.num_ents; i++) {
@@ -134,13 +147,25 @@ void cl_game_Tick(Game *game, float tick_dt) {
 
 // Draw step
 void game_Render(Game *game, float alpha) {
-	if(game->ent_handler.cl_player_id && !pause) { 
+	fps_tick += 16.6f * GetFrameTime();
+	if(fps_tick >= 1.0f) {
+		fps = GetFPS();
+		fps_tick = 0;
+
+		if(game->state) {
+			fps_vals.push_back(fps);
+			if(fps < fps_min) fps_min = fps;
+			if(fps > fps_max) fps_max = fps;
+		}
+	}
+
+	if(game->ent_handler.cl_player_id && !game->pause) { 
 		cc_Resolve(&cc, &game->ent_handler, alpha);
 	}
 
 	BeginDrawing();
-	BeginTextureMode(buffer);
-	if(!pause) ClearBackground(BLACK);
+	BeginTextureMode(game->buffer);
+	if(!game->pause) ClearBackground(BLACK);
 
 	game_Draw3D(game, alpha);
 	//game_Draw2D(game, alpha);
@@ -148,8 +173,8 @@ void game_Render(Game *game, float alpha) {
 	EndTextureMode();
 
 	DrawTexturePro(
-			buffer.texture, 
-			(Rectangle) { 0, 0, (f32)buffer.texture.width, -(f32)buffer.texture.height },
+			game->buffer.texture, 
+			(Rectangle) { 0, 0, (f32)game->buffer.texture.width, -(f32)game->buffer.texture.height },
 			(Rectangle) { 0, 0, game->conf->ww, game->conf->wh }, 
 			Vector2Zero(), 
 			0.0f, 
@@ -162,7 +187,7 @@ void game_Render(Game *game, float alpha) {
 }
 
 void game_Draw3D(Game *game, float alpha) {
-	if(!game->state || pause) return;
+	if(!game->state || game->pause) return;
 
 	BeginMode3D(game->camera);
 
@@ -180,7 +205,7 @@ void game_Draw2D(Game *game, float alpha) {
 		return;
 	}	
 
-	if(pause) game_PauseMenu(game);
+	if(game->pause) game_PauseMenu(game);
 
 	if(conf_GetOptionValue("graphics:show_fps")) { 
 		ui_Label( (Rectangle) { 0, 0, 144, 32 }, "");
@@ -202,25 +227,17 @@ void game_StartNew(Game *game) {
 	rmap.Build(&game->bsp);
 }
 
-void game_MainMenu(Game *game) {
-	if(ui_Button( (Rectangle) { 100, game->conf->wh * 0.5f, 300, 64 }, "Start")) {
-		game_StartNew(game);
-		return;
-	}
+void game_TogglePause(Game *game) {
+		game->pause = !game->pause;
 
-	ui_CheckBox( (Rectangle) { 0, 0, 300, 64 }, "checkbox", &val);	
+		if(game->pause) 
+			input_EnableMouse();	
+		else 
+			input_DisableMouse(0);
 }
 
-void game_PauseMenu(Game *game) {
-	if(ui_Button( (Rectangle) { 100, game->conf->wh * 0.5f, 300, 100 }, "Resume") )		
-		pause = false;
-
-	if(!pause) {
-		input_DisableMouse(24);
-		return;
-	}
-	
-	if(ui_Button( (Rectangle) { 100, game->conf->wh * 0.5f + 100, 300, 100 }, "Quit") )		
-		game->flags |= FLAG_EXIT_REQUEST;
+void game_QueuePause(Game *game, int frames) {
+	pause_queue = frames;
+	game->flags |= FLAG_PAUSE_REQUEST;
 }
 

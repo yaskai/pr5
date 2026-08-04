@@ -3,7 +3,7 @@ INC_DIR := include
 # Compiler and flags
 CC := g++
 #CFLAGS := -Wall -O2 -Ibuild/external/raylib/src -DPLATFORM_DESKTOP_SDL
-CFLAGS := -g -Wall -O2 -Ibuild/external/raylib/src -I/usr/include/SDL3 -DPLATFORM_DESKTOP_SDL -std=c++17
+CFLAGS := -g -Wall -O3 -Ibuild/external/raylib/src -I/usr/include/SDL3 -DPLATFORM_DESKTOP_SDL -std=c++17
 LDFLAGS := -lSDL3 -lm -ldl -lpthread -lGL -lrt -lX11
 
 #CFLAGS := -g -Wall -std=c99 -O2 -I$(INC_DIR) -Ibuild/external/raylib/src -DPLATFORM_DESKTOP

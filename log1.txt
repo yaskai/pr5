@@ -1,0 +1,9 @@
+// normal:
+fps average: 1973
+lowest: 51
+highest: 2923
+
+// with vis-list:
+fps average: 1860
+lowest: 132
+highest: 2695

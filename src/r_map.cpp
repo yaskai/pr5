@@ -199,6 +199,7 @@ void r_Map::Build(Bsp_Data *bsp) {
 	}
 
 	rbrushes = (r_Brush*)realloc(rbrushes, sizeof(r_Brush) * rbrush_count);
+	vis_list = (bool*)calloc(bsp->num_leaves, sizeof(bool));
 }
 
 void r_Map::Unload() {
@@ -215,9 +216,11 @@ void r_Map::Unload() {
 	rbrush_count = 0;
 	rbrush_cap = 0;
 	if(rbrushes) free(rbrushes);
+	if(vis_list) free(vis_list);
 }
 
 void r_Map::Draw(Bsp_Data *bsp, Vector3 camera_position) {
+	/*
 	i32 curr_leaf = vis_FindLeaf(bsp, camera_position);
 
 	for(u32 i = 0; i < rbrush_count; i++) { 
@@ -227,5 +230,51 @@ void r_Map::Draw(Bsp_Data *bsp, Vector3 camera_position) {
 
 		DrawModel(rbrush->model, Vector3Zero(), 1.0f, WHITE);
 	}
+	*/
+
+	UpdateVis(bsp, camera_position);
+	
+	for(u32 i = 0; i < rbrush_count; i++) {
+		r_Brush *rbrush = &rbrushes[i];
+		// Skip non-visible leaves
+		if(!vis_list[rbrush->leaf]) continue;
+		// Skip brushes with designated flag 
+		if(rbrush->flags & RBRUSH_FLAG_SKIP) continue;
+		// Render rbrush models
+		DrawModel(rbrush->model, Vector3Zero(), 1.0f, WHITE);
+	}
+}
+
+void r_Map::UpdateVis(Bsp_Data *bsp, Vector3 camera_position) {
+	// Get current occupied leaf index at camera position
+	i32 curr_leaf = vis_FindLeaf(bsp, camera_position);	
+
+	Bsp_Leaf *leaf = &bsp->leaves[curr_leaf];	
+	if(leaf->vis_ofs < 0) {
+		// No vis data for leaf, render everything
+		memset(vis_list, 1, bsp->num_leaves);
+		return;
+	}
+
+	u8 *vis = bsp->vis + leaf->vis_ofs;
+	u32 leafnum = 1;
+
+	while(leafnum < bsp->num_leaves) {
+		if(*vis == 0) {
+			vis++;
+			u32 run = (u32)(*vis) * 8;
+			vis++;
+			u32 count = (run < bsp->num_leaves - leafnum) ? run : (bsp->num_leaves - leafnum);
+			memset(&vis_list[leafnum], 0, count);
+			leafnum += run;
+		} else {
+			u8 byte = *vis++;
+			for(i32 bit = 0; bit < 8 && leafnum < bsp->num_leaves; bit++, leafnum++) {
+				vis_list[leafnum] = (byte >> bit) & 1;
+			}
+		}
+	}
+
+	vis_list[curr_leaf] = 1;
 }
 

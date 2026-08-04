@@ -81,7 +81,7 @@ void game_Init(Game *game, Config *conf) {
 void game_OpenDrawBuffer(Game *game, int width, int height) {
 	if(IsTextureValid(game->buffer.texture)) UnloadRenderTexture(game->buffer);	
 	game->buffer = LoadRenderTexture(width, height);
-	SetTextureFilter(game->buffer.texture, TEXTURE_FILTER_POINT);
+	SetTextureFilter(game->buffer.texture, TEXTURE_FILTER_TRILINEAR);
 }
 
 // Unload game state

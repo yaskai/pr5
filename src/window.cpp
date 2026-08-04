@@ -18,6 +18,7 @@ u32 platform_flags[] = {
 static const u8 platform = LINUX;
 u32 window_flags = platform_flags[platform];	
 
+// Open window instance
 void window_Open() {
 	InitWindow(conf_GetOptionValue("window:width"), conf_GetOptionValue("window:height"), "PR5");	
 	SetExitKey(KEY_NULL);
@@ -27,6 +28,7 @@ void window_Open() {
 	SetWindowState(window_flags);
 }
 
+// Toggle provided window flag
 void window_ToggleFlag(u32 flag) {
 	window_flags ^= flag;
 
@@ -34,6 +36,7 @@ void window_ToggleFlag(u32 flag) {
 	else ClearWindowState(flag);
 }
 
+// Check if given flag is active
 bool window_HasFlag(u32 flag) {
 	return window_flags & flag;
 }

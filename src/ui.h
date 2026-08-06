@@ -44,3 +44,12 @@ void ui_CheckBox(Rectangle rect, const char *text, bool *val);
 
 void ui_Label(Rectangle rect, const char *text);
 
+typedef struct {
+	const char **text;		
+	i32 count, idx;
+	
+} UI_DirButtonData;
+
+void ui_DirectionalButton(Rectangle rect, UI_DirButtonData *data);
+
+

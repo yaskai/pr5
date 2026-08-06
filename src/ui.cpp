@@ -100,3 +100,20 @@ void ui_Label(Rectangle rect, const char *text) {
 	ui_DrawText(rect, text, ui.colors[WG_DEFAULT]);	
 }
 
+// A button with directions used for scrolling through some options
+// * NOTE: 
+// Some extra graphical element (arrows, little dots, etc.)  should be added in later...
+// Functional for now...
+void ui_DirectionalButton(Rectangle rect, UI_DirButtonData *data) {
+	const char *text = &data->text[data->idx][0];
+
+	if(ui_Button(rect, text)) {
+		// Get midpoint
+		float mid_x = rect.x + rect.width * 0.5f;
+		// Set direction, left is negative, right is positive
+		i32 d = GetMouseX() > mid_x ? +1 : -1;
+		// Jump index to next in direction, circular
+		data->idx = (data->idx + d + data->count) % data->count;
+	}
+}
+

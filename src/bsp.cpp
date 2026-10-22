@@ -7,6 +7,7 @@
 #include "message.h"
 #include "bsp.h"
 
+// Lump parsing functions table
 typedef void (*ParseFunc)(Bsp_Data *bsp, FILE *pF);
 static const ParseFunc parse_fn[BSP_NUM_LUMPS] = {
 	&bsp_ParseEntities,					// Entities
@@ -17,7 +18,7 @@ static const ParseFunc parse_fn[BSP_NUM_LUMPS] = {
     &bsp_ParseNodes,					// BSP nodes
     &bsp_ParseTexInfos,					// Texinfos/surfaces
     &bsp_ParseFaces,					// Faces
-    NULL, /*&bsp_ParseLightmaps,*/		// Lightmaps
+    NULL, /*&bsp_ParseLightmaps,*/		// Lightmaps (null, using bspx from ew-tools instead)
     &bsp_ParseClipNodes,				// Clip nodes
     &bsp_ParseLeaves,					// Leaves
     &bsp_ParseListFaces,				// List faces

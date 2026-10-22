@@ -47,3 +47,12 @@ void player_MouseLook(Entity *ent, float dt) {
 	ent->ct.forward = look;
 }
 
+void player_PerFrameUpdate(Ent_Handler *handler, float dt) {
+	i32 id = handler->cl_player_id;	
+	
+	if(id <= -1)
+		return;
+
+	player_MouseLook(&handler->ents[id], dt);
+}
+

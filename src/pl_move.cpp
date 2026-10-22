@@ -92,7 +92,7 @@ void pm_TraceMove(Bsp_Data *bsp, Comp_Transform *ct, Vector3 start, Vector3 wish
 	
 	for(u8 i = 0; i < PM_MAX_BUMPS; i++) {
 		// End slide trace if velocity is too small
-		if(Vector3LengthSqr(vel) <= PM_STOP_EPS) break;	
+		if(Vector3Length(vel) <= PM_STOP_EPS) break;	
 
 		Vector3 move = Vector3Scale(vel, t_remain); 	
 
@@ -118,7 +118,7 @@ void pm_TraceMove(Bsp_Data *bsp, Comp_Transform *ct, Vector3 start, Vector3 wish
 			float into = Vector3DotProduct(vel, clips[j]);
 			if(into >= 0.0f) continue; 
 
-			pm_ClipVelocity(vel, clips[j], &vel, 1.005f);
+			pm_ClipVelocity(vel, clips[j], &vel, 1.0f + PM_STOP_EPS);
 		}
 
 		t_remain *= (1 - tr.fraction);
@@ -149,17 +149,21 @@ bool pm_CheckGround(Comp_Transform *ct, Bsp_Data *bsp, Vector3 position) {
 	return false;
 }
 
+// Player movement when grounded.  Handles stepping
 void pm_GroundMove(Comp_Transform *ct, Pm_TraceData *pm, Vector3 start, Vector3 wish_vel, Bsp_Data *bsp, float dt) {
+	// First, do a air/base trace to use if no stepping is possible
 	Pm_TraceData base_pm = Pm_TraceDataEmpty();	
 	pm_TraceMove(bsp, ct, start, wish_vel, &base_pm, dt);
 
 	*pm = base_pm;
-	if(Vector3LengthSqr(base_pm.start_vel) <= PM_STOP_EPS) return;
+	if(Vector3Length(base_pm.start_vel) <= PM_STOP_EPS) return;
 	if(base_pm.fraction >= 1.0f) return;
 
 	Vector3 step_start = start; 
 	step_start.z += PM_STEP_Z;
 
+	// Do step trace:
+	// checks if moving up by step height allows moving forward further than base
 	Pm_TraceData step_pm = Pm_TraceDataEmpty();
 	pm_TraceMove(bsp, ct, step_start, (Vector3) { wish_vel.x, wish_vel.y, 0.0f }, &step_pm, dt);
 
@@ -183,6 +187,8 @@ void pm_GroundMove(Comp_Transform *ct, Pm_TraceData *pm, Vector3 start, Vector3 
 
 	Vector3 down_vel = Vector3Scale(WORLD_DOWN, PM_STEP_Z);
 
+	// Step down:
+	// after doing a step up, push player down to the ground instead of x units up
 	Pm_TraceData down_pm = Pm_TraceDataEmpty();
 	down_pm.origin = step_pm.end_pos;
 	pm_TraceMove(bsp, ct, down_pm.origin, down_vel, &down_pm, 1);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "raylib.h"
-#include "nums.h"
+#include "common/nums.h"
 
 #define BSP_VERSION	38
 #define NUM_LUMPS 	18

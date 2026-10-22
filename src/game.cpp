@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <stdint.h>
+#include "player.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "rlgl.h"
@@ -100,18 +101,17 @@ void game_Close(Game *game) {
 
 // Per-frame update
 void cl_game_Update(Game *game, float dt) {
-	if(!game->pause) {
-		input_Poll(&game->input_handler);
-		ent_Handler_Update(&game->ent_handler, dt);
-	}
+	if(IsKeyPressed(KEY_ESCAPE))
+		game_TogglePause(game);
 
-	if(IsKeyPressed(KEY_ESCAPE)) game_TogglePause(game);
-
-	if(game->state == STATE_TITLE && IsKeyDown(KEY_Y)) {
+	if(game->state == STATE_TITLE && IsKeyDown(KEY_Y)) 
 		game_StartNew(game);
-	} 
 
 	if(!game->pause) { 
+		// Do some per-frame updtates
+		input_Poll(&game->input_handler);
+		ent_Handler_Update(&game->ent_handler, dt);
+
 		game->accumulator += dt;
 
 		while(game->accumulator >= TICK) {

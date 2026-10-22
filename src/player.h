@@ -9,4 +9,5 @@ void player_Render(Entity *ent, float alpha);
 void player_Update(Entity *ent, float dt);
 
 void player_MouseLook(Entity *ent, float dt);
+void player_PerFrameUpdate(Ent_Handler *handler, float dt);
 

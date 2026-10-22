@@ -24,6 +24,9 @@ typedef struct {
 
 } Comp_Data;
 
+// Flag for transorm component to use if character is crouching
+#define CT_CROUCH 0x01
+
 // Transform component
 typedef struct {
 	BoundingBox bounds;

@@ -9,8 +9,8 @@ enum ENTITY_TYPES : u16 {
 	ENT_PLAYER	= 1,
 };
 
-#define ENT_ACTIVE		(0x01)
-#define ENT_TRIGGERED	(0x02)
+#define ENT_ACTIVE		0x01
+#define ENT_TRIGGERED	0x02
 
 // Base-data component
 typedef struct {
@@ -43,6 +43,7 @@ typedef struct {
 
 	bool on_ground;
 
+	// Extra state flags
 	u8 flags;
 	
 } Comp_Transform;
@@ -50,6 +51,8 @@ typedef struct {
 // Health component
 typedef struct {
 	BoundingBox hitbox;	
+
+	float dmg_cooldown;	// Damage cooldown timer
 
 	i8 amount;			// HP count
 
@@ -94,5 +97,4 @@ void ent_handler_Close(Ent_Handler *handler);
 void ent_handler_Tick(Ent_Handler *handler, Bsp_Data *bsp, float tick_dt);
 void ent_Handler_Render(Ent_Handler *handler, float alpha);
 void ent_Handler_Update(Ent_Handler *handler, float dt);
-
 

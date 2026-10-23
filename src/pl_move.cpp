@@ -92,7 +92,7 @@ void pm_TraceMove(Bsp_Data *bsp, Comp_Transform *ct, Vector3 start, Vector3 wish
 	
 	for(u8 i = 0; i < PM_MAX_BUMPS; i++) {
 		// End slide trace if velocity is too small
-		if(Vector3Length(vel) <= PM_STOP_EPS) break;	
+		if(Vector3LengthSqr(vel) <= PM_STOP_EPS) break;	
 
 		Vector3 move = Vector3Scale(vel, t_remain); 	
 
@@ -118,7 +118,7 @@ void pm_TraceMove(Bsp_Data *bsp, Comp_Transform *ct, Vector3 start, Vector3 wish
 			float into = Vector3DotProduct(vel, clips[j]);
 			if(into >= 0.0f) continue; 
 
-			pm_ClipVelocity(vel, clips[j], &vel, 1.0f + PM_STOP_EPS);
+			pm_ClipVelocity(vel, clips[j], &vel, 1.005f);
 		}
 
 		t_remain *= (1 - tr.fraction);
@@ -156,7 +156,7 @@ void pm_GroundMove(Comp_Transform *ct, Pm_TraceData *pm, Vector3 start, Vector3 
 	pm_TraceMove(bsp, ct, start, wish_vel, &base_pm, dt);
 
 	*pm = base_pm;
-	if(Vector3Length(base_pm.start_vel) <= PM_STOP_EPS) return;
+	if(Vector3LengthSqr(base_pm.start_vel) <= PM_STOP_EPS) return;
 	if(base_pm.fraction >= 1.0f) return;
 
 	Vector3 step_start = start; 
@@ -175,9 +175,14 @@ void pm_GroundMove(Comp_Transform *ct, Pm_TraceData *pm, Vector3 start, Vector3 
 	Vector3 p2 = Vector3Add(p1, Vector3Scale(WORLD_DOWN, PM_STEP_Z));
 	bsp_RecursiveTraceEx(&bsp->hulls[1], bsp->hulls[1].first_clipnode, 0, 1, p1, p2, &tr);
 	
-	bool use_step = (dist_step > dist_base) && tr.plane.normal[2] >= 1.0f;
+	bool use_step = (dist_step > dist_base);
 
-	if(tr.start_solid || tr.all_solid) 
+	// Stepping onto sloped surfaces can cause no-clipping issues,
+	// so don't allow it...
+	if(tr.plane.normal[2] < 1.0f)
+		use_step = false;
+
+	if(tr.start_solid && tr.all_solid) 
 		use_step = false;
 
 	if(!use_step) {
@@ -216,6 +221,7 @@ void pm_GroundMove(Comp_Transform *ct, Pm_TraceData *pm, Vector3 start, Vector3 
 }
 
 void pm_ApplyGravity(Comp_Transform *ct, float dt) {
+	// Don't add falling force if grounded
 	if(ct->on_ground) { 
 		return;
 	}

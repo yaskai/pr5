@@ -9,7 +9,7 @@
 
 #define PM_MAX_CLIPS 			4
 #define PM_MAX_BUMPS 			4
-#define PM_STOP_EPS 	 		0.01f
+#define PM_STOP_EPS 	 		0.001f
 
 #define PM_PITCH_MAX 			(89.0f * DEG2RAD)
 

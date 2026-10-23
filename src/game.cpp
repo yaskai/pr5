@@ -205,7 +205,8 @@ void game_Draw2D(Game *game, float alpha) {
 		return;
 	}	
 
-	if(game->pause) game_PauseMenu(game);
+	if(game->pause)
+		game_PauseMenu(game);
 
 	if(conf_GetOptionValue("graphics:show_fps")) { 
 		ui_Label( (Rectangle) { 0, 0, 144, 32 }, "");

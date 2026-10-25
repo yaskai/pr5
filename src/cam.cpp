@@ -30,8 +30,13 @@ void cc_Resolve(Cam_Controller *cc, Ent_Handler *ent_handler, float alpha) {
 		cc->bob = Lerp(cc->bob, cc->bob * 0.5f, dt*50);
 
 	// Camera side tilt:
+	//
+	// Get 'right' vector
 	Vector3 right =  Vector3Normalize(Vector3CrossProduct(h_fwd, WORLD_UP));
+	// Check if going sideways
 	float denom = Vector3DotProduct(Vector3Normalize(h_vel), right);
+	// Multiply result by camera tilt config setting,
+	// value will always be 0 or 1 so either enabled/disabled...
 	denom *= conf_GetOptionValue("graphics:camera_tilt");
 
 	if(fabsf(denom) >= 0.65f && Vector3Length(h_vel) >= 1.0f) {
@@ -50,15 +55,14 @@ void cc_Resolve(Cam_Controller *cc, Ent_Handler *ent_handler, float alpha) {
 	cc->z_targ = ent->ct.position.z + CAM_Z_OFFSET;
 	cc->z_curr = Lerp(cc->z_curr, cc->z_targ, dt * cc->z_speed);
 
-	Vector3 origin = ent->ct_prev.position;
-	Vector3 target = ent->ct.position;
+	Vector3 origin = ent->ct_prev.position, target = ent->ct.position;
 
-	Vector3 pos; 
-	pos.x = Lerp(origin.x, target.x, alpha);
-	pos.y = Lerp(origin.y, target.y, alpha);
-	pos.z = cc->z_curr + cc->bob;
+	cc->camera->position = (Vector3) {
+		.x = Lerp(origin.x, target.x, alpha),
+		.y = Lerp(origin.y, target.y, alpha),
+		.z = cc->z_curr + cc->bob
+	}; 
 
-	cc->camera->position = pos;
 	cc->camera->target = Vector3Add(cc->camera->position, ent->ct.forward);
 }
 

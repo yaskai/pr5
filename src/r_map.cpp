@@ -61,7 +61,7 @@ Model *r_BspLeafToModels(Bsp_Data *bsp, Lightmap *lm, i32 leaf_id, int *n_out, u
 		mesh->texcoords2 	= (float*)MemAlloc(sizeof(float) * mesh->vertexCount * 2);
 	}
 
-	// Set data
+	// Write data
 	for(u16 i = 0; i < leaf->num_faces; i++) {
 		u16 face_id = bsp->list_faces.faces[leaf->first_face + i];
 		Bsp_Face *face = &bsp->faces[face_id];
@@ -145,7 +145,7 @@ Model *r_BspLeafToModels(Bsp_Data *bsp, Lightmap *lm, i32 leaf_id, int *n_out, u
 	return models;
 }
 
-r_Brush *r_BspLeafToRenderBrushes(Bsp_Data *bsp, Lightmap *lm, int32_t leaf_id, int *n_out) {
+r_Brush *r_BspLeafToRenderBrushes(Bsp_Data *bsp, Lightmap *lm, i32 leaf_id, i32 *n_out) {
 	r_Brush *rbrushes = NULL;
 	*n_out = 0;
 

@@ -41,7 +41,7 @@ void ui_DrawText(Rectangle rect, const char *text, Color color) {
 	DrawTextEx(ui.font, text, center, ui.text_size, ui.text_spacing, color);
 }
 
-// Display a button, returns true if clicked
+// Display a button, returns true when clicked
 bool ui_Button(Rectangle rect, const char *text) {
 	// Button state begins at 0 (default) on each frame
 	u8 state = WG_DEFAULT;
